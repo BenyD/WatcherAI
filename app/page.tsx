@@ -25,7 +25,7 @@ const HomePage = (props: Props) => {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // state 
+  // state
   const [mirrored, setMirrored] = useState<boolean>(true);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [autoRecordEnabled, setAutoRecordEnabled] = useState<boolean>(false)
@@ -69,7 +69,7 @@ const HomePage = (props: Props) => {
     initModel();
   }, [])
 
-  // loads model 
+  // loads model
   // set it in a state varaible
   async function initModel() {
     const loadedModel: ObjectDetection = await cocossd.load({
@@ -93,31 +93,30 @@ const HomePage = (props: Props) => {
       webcamRef.current.video.readyState === 4
     ) {
       const predictions: DetectedObject[] = await model.detect(webcamRef.current.video);
-  
+
       resizeCanvas(canvasRef, webcamRef);
       drawOnCanvas(mirrored, predictions, canvasRef.current?.getContext('2d'));
-  
+
       let isPerson: boolean = false;
-  
-      // Check if a person is detected in the current frame
+
       if (predictions.length > 0) {
         predictions.forEach((prediction) => {
           isPerson = prediction.class === 'person';
         });
-  
-        // If a person is detected and autoRecordEnabled is true, start recording
+
         if (isPerson && autoRecordEnabled) {
           startRecording(true);
         }
       } else {
-        // If no person is detected and recording is in progress, stop recording
         if (isRecording) {
-          stopRecording();
+          setTimeout(() => {
+            stopRecording();
+          }, 5000); // Adjust the delay time (in milliseconds) as needed
         }
       }
     }
   }
-  
+
 
   useEffect(() => {
     interval = setInterval(() => {
@@ -251,7 +250,7 @@ const HomePage = (props: Props) => {
 
     if (mediaRecorderRef.current?.state == 'recording') {
       // check if recording
-      // then stop recording 
+      // then stop recording
       // and save to downloads
       mediaRecorderRef.current.requestData();
       clearTimeout(stopTimeout);
@@ -260,7 +259,7 @@ const HomePage = (props: Props) => {
 
     } else {
       // if not recording
-      // start recording 
+      // start recording
       startRecording(false);
     }
   }
@@ -303,7 +302,7 @@ const HomePage = (props: Props) => {
       toast('Recording stopped');
     }
   }
-  
+
 
 
   // inner components
@@ -392,7 +391,7 @@ const HomePage = (props: Props) => {
         </li>
       </ul>
         <div className='mt-12 text-center text-xs text-muted-foreground'>
-              © 2024 Beny Dishon. 
+              © 2024 Beny Dishon.
               All rights reserved.
         </div>
     </div>
