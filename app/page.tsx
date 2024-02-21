@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { ModeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,7 @@ const HomePage = (props: Props) => {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // state
+  // state 
   const [mirrored, setMirrored] = useState<boolean>(true);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [autoRecordEnabled, setAutoRecordEnabled] = useState<boolean>(false)
@@ -70,7 +69,7 @@ const HomePage = (props: Props) => {
     initModel();
   }, [])
 
-  // loads model
+  // loads model 
   // set it in a state varaible
   async function initModel() {
     const loadedModel: ObjectDetection = await cocossd.load({
@@ -94,29 +93,22 @@ const HomePage = (props: Props) => {
       && webcamRef.current.video.readyState === 4
     ) {
       const predictions: DetectedObject[] = await model.detect(webcamRef.current.video);
-  
+
       resizeCanvas(canvasRef, webcamRef);
-      drawOnCanvas(mirrored, predictions, canvasRef.current?.getContext('2d'));
-  
-      let isPersonDetected: boolean = false;
+      drawOnCanvas(mirrored, predictions, canvasRef.current?.getContext('2d'))
+
+      let isPerson: boolean = false;
       if (predictions.length > 0) {
         predictions.forEach((prediction) => {
-          if (prediction.class === 'person') {
-            isPersonDetected = true;
-          }
-        });
-  
-        if (isPersonDetected && autoRecordEnabled) {
+          isPerson = prediction.class === 'person';
+        })
+
+        if (isPerson && autoRecordEnabled) {
           startRecording(true);
-        } else {
-          stopRecording(); // Stop recording if no person detected
         }
-      } else {
-        stopRecording(); // Stop recording if no objects detected
       }
     }
   }
-  
 
   useEffect(() => {
     interval = setInterval(() => {
@@ -124,6 +116,7 @@ const HomePage = (props: Props) => {
     }, 100)
 
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webcamRef.current, model, mirrored, autoRecordEnabled, runPrediction])
 
   return (
@@ -278,21 +271,6 @@ const HomePage = (props: Props) => {
     }
   }
 
-  function stopRecording() {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.requestData();
-      clearTimeout(stopTimeout);
-
-      // Wait for 60 seconds before stopping the recording
-      stopTimeout = setTimeout(() => {
-        if (mediaRecorderRef.current) {
-          mediaRecorderRef.current.stop();
-          toast('Recording stopped');
-        }
-      }, 60000);
-    }
-  }
-
   function toggleAutoRecord() {
     if (autoRecordEnabled) {
       setAutoRecordEnabled(false);
@@ -386,17 +364,17 @@ const HomePage = (props: Props) => {
         </li>
         <Separator />
         <li className="space-y-4">
-          <strong>Made by Beny Dishon & Rohit M ⚡️</strong>
+          <strong>Developed by Team 13 ⚡️ </strong>
           <SocialMediaLinks/>
           <br />
           <br />
           <br />
         </li>
       </ul>
-      <div className='mt-auto pt-8 text-center text-xs text-muted-foreground'>
-            © 2024 Beny Dishon. 
-            All rights reserved.
-      </div>
+        <div className='mt-12 text-center text-xs text-muted-foreground'>
+              © 2024 Beny Dishon. 
+              All rights reserved.
+        </div>
     </div>
   }
 }
