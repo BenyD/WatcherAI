@@ -401,6 +401,14 @@ const HomePage = (props: Props) => {
           <strong>Volume Slider 🔊</strong>
           <p>Adjust the volume level of the notifications.</p>
         </li>
+
+        <li>
+          <strong>Time Delay Slider ⏱️</strong>
+          <p>Set a delay before the recording is stopped. <br />
+          Increments by 10 seconds upto a maximum of 5 minutes.
+          </p>
+        </li>
+
         <li>
           <strong>Camera Feed Highlighting 🎨</strong>
           <p>
@@ -410,13 +418,13 @@ const HomePage = (props: Props) => {
           </p>
         </li>
         <Separator />
-        <li className="space-y-4">
+        {/* <li className="space-y-4">
           <strong>Developed by Team 13 ⚡️ </strong>
           <SocialMediaLinks/>
           <br />
           <br />
           <br />
-        </li>
+        </li> */}
       </ul>
         <div className='mt-12 text-center text-xs text-muted-foreground'>
               © 2024 Beny Dishon.
