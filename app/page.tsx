@@ -87,28 +87,37 @@ const HomePage = (props: Props) => {
 
   async function runPrediction() {
     if (
-      model
-      && webcamRef.current
-      && webcamRef.current.video
-      && webcamRef.current.video.readyState === 4
+      model &&
+      webcamRef.current &&
+      webcamRef.current.video &&
+      webcamRef.current.video.readyState === 4
     ) {
       const predictions: DetectedObject[] = await model.detect(webcamRef.current.video);
-
+  
       resizeCanvas(canvasRef, webcamRef);
-      drawOnCanvas(mirrored, predictions, canvasRef.current?.getContext('2d'))
-
+      drawOnCanvas(mirrored, predictions, canvasRef.current?.getContext('2d'));
+  
       let isPerson: boolean = false;
+  
+      // Check if a person is detected in the current frame
       if (predictions.length > 0) {
         predictions.forEach((prediction) => {
           isPerson = prediction.class === 'person';
-        })
-
+        });
+  
+        // If a person is detected and autoRecordEnabled is true, start recording
         if (isPerson && autoRecordEnabled) {
           startRecording(true);
+        }
+      } else {
+        // If no person is detected and recording is in progress, stop recording
+        if (isRecording) {
+          stopRecording();
         }
       }
     }
   }
+  
 
   useEffect(() => {
     interval = setInterval(() => {
@@ -284,6 +293,17 @@ const HomePage = (props: Props) => {
     }
 
   }
+
+  function stopRecording() {
+    if (mediaRecorderRef.current?.state === 'recording') {
+      mediaRecorderRef.current.requestData();
+      clearTimeout(stopTimeout);
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      toast('Recording stopped');
+    }
+  }
+  
 
 
   // inner components
