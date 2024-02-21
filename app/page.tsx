@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { beep } from '@/utils/audio';
-import { Camera, Divide, FlipHorizontal, MoonIcon, PersonStanding, SunIcon, Video, Volume2 } from 'lucide-react';
+import { Camera, Clock, Divide, FlipHorizontal, MoonIcon, PersonStanding, SunIcon, Video, Volume2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react'
 import { Rings } from 'react-loader-spinner';
 import Webcam from 'react-webcam';
@@ -34,6 +34,13 @@ const HomePage = (props: Props) => {
   const [loading, setLoading] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  const [delayTime, setDelayTime] = useState<number>(5000); 
+
+  const updateDelayTime = (value: number) => {
+    setDelayTime(value);
+  };
+
 
   // initialize the media recorder
   useEffect(() => {
@@ -111,7 +118,7 @@ const HomePage = (props: Props) => {
         if (isRecording) {
           setTimeout(() => {
             stopRecording();
-          }, 5000); // Adjust the delay time (in milliseconds) as needed
+          }, delayTime);
         }
       }
     }
@@ -181,8 +188,29 @@ const HomePage = (props: Props) => {
               onClick={toggleAutoRecord}
             >
               {autoRecordEnabled ? <Rings color='white' height={45} /> : <PersonStanding />}
-
             </Button>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={'outline'} size={'icon'}>
+                  <Clock />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="p-4">
+                  <p className="text-sm mb-2">Set Delay Time (ms)</p>
+                  <Slider
+                    max={300000} // Set the maximum delay time as needed (5 Minutes - 300 Seconds -> 3,00,000ms)
+                    min={0}  // Set the minimum delay time as needed
+                    step={10000}   // Set the step value as needed (10 Seconds -> 10,000ms)
+                    defaultValue={[delayTime]}
+                    onValueCommit={(val) => {
+                      updateDelayTime(val[0]);
+                    }}
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           {/* Bottom Secion  */}
           <div className='flex flex-col gap-2'>
