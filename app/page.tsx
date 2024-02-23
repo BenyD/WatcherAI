@@ -34,12 +34,14 @@ const HomePage = (props: Props) => {
   const [loading, setLoading] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
-  const [delayTime, setDelayTime] = useState<number>(5000); 
+  const [delayTime, setDelayTime] = useState<number>(5000);
 
   const updateDelayTime = (value: number) => {
     setDelayTime(value);
   };
+
+const [currentVolume, setCurrentVolume] = useState<number>(volume * 100);
+const [currentDelayTime, setCurrentDelayTime] = useState<number>(delayTime / 1000);
 
 
   // initialize the media recorder
@@ -197,21 +199,23 @@ const HomePage = (props: Props) => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
-                <div className="p-4">
-                  <p className="text-sm mb-2">Set Delay Time (ms)</p>
-                  <Slider
-                    max={300000} // Set the maximum delay time as needed (5 Minutes - 300 Seconds -> 3,00,000ms)
-                    min={0}  // Set the minimum delay time as needed
-                    step={10000}   // Set the step value as needed (10 Seconds -> 10,000ms)
-                    defaultValue={[delayTime]}
-                    onValueCommit={(val) => {
-                      updateDelayTime(val[0]);
-                    }}
-                  />
-                </div>
+              <div className="flex items-center">
+                <span className="mr-2">Delay Time: {currentDelayTime.toFixed(0)} seconds</span>
+                <Slider
+                  max={300} // Set the maximum delay time in seconds
+                  min={0}
+                  step={1}
+                  defaultValue={[delayTime / 1000]}
+                  onValueChange={(val) => {
+                    setDelayTime(val[0] * 1000);
+                    setCurrentDelayTime(val[0]);
+                  }}
+                />
+            </div>
               </PopoverContent>
             </Popover>
           </div>
+
           {/* Bottom Secion  */}
           <div className='flex flex-col gap-2'>
             <Separator className='my-2' />
@@ -223,16 +227,21 @@ const HomePage = (props: Props) => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
+              <div className="flex items-center">
+                <span className="mr-2">Volume: {currentVolume.toFixed(0)}%</span>
                 <Slider
                   max={1}
                   min={0}
                   step={0.2}
                   defaultValue={[volume]}
-                  onValueCommit={(val) => {
+                  onValueChange={(val) => {
+                    const percentageValue = val[0] * 100;
                     setVolume(val[0]);
+                    setCurrentVolume(percentageValue);
                     beep(val[0]);
                   }}
                 />
+            </div>
               </PopoverContent>
             </Popover>
           </div>
@@ -338,7 +347,7 @@ const HomePage = (props: Props) => {
     return <div className="text-xs text-muted-foreground">
       <ul className="space-y-4">
         <li>
-          <strong>Dark Mode/Sys Theme 🌗</strong>
+          <strong>Dark Mode/System Theme 🌗</strong>
           <p>Toggle between dark mode and system theme.</p>
           <Button className="my-2 h-6 w-6" variant={"outline"} size={"icon"}>
             <SunIcon size={14} />
@@ -426,7 +435,7 @@ const HomePage = (props: Props) => {
           <br />
         </li> */}
       </ul>
-        <div className='mt-12 text-center text-xs text-muted-foreground'>
+        <div className='mt-auto pt-20 text-center text-xs text-muted-foreground'>
               © 2024 Beny Dishon.
               All rights reserved.
         </div>
