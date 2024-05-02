@@ -1,7 +1,7 @@
-export function beep(volume: number){
-    var sound = new Audio("data:audio/wav;base64,"+audioBase64);
-    sound.volume = volume;
-    sound.play();
+export function beep(volume: number) {
+  var sound = new Audio("data:audio/wav;base64," + audioBase64);
+  sound.volume = volume;
+  sound.play();
 }
 
 const audioBase64 =
